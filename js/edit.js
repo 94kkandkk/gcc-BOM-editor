@@ -38,11 +38,11 @@ function loadBomName() {
     }
 }
 
-// 渲染BOM树（核心修复：递归渲染，节点/图标解耦）
+// 渲染BOM树（原有逻辑，正常无需修改）
 function renderBomTree() {
     const treeContainer = document.getElementById('treeContainer');
     if (bomData.rootNodes.length === 0) {
-        treeContainer.innerHTML = '<div class="empty-tip">暂无零件<br>点击顶部「新增根零件」开始创建</div>';
+        treeContainer.innerHTML = '<div class="empty-tip">暂无零件<br>👉 点击顶部「新增根零件」开始创建</div>';
         return;
     }
     treeContainer.innerHTML = '';
@@ -51,13 +51,13 @@ function renderBomTree() {
     });
 }
 
-// 递归渲染单个节点（核心修复：节点/图标独立DOM，专属标识）
+// 递归渲染单个节点（原有逻辑，正常无需修改）
 function renderTreeNode(node, isRoot = false) {
     const nodeDiv = document.createElement('div');
     nodeDiv.className = `tree-node ${isRoot ? 'tree-root-node' : ''} ${node.id === currentNodeId ? 'active' : ''}`;
     nodeDiv.dataset.nodeId = node.id; // 节点专属标识
 
-    // 折叠/展开图标（独立DOM，核心修复）
+    // 折叠/展开图标（独立DOM）
     const iconSpan = document.createElement('span');
     iconSpan.className = 'node-icon';
     iconSpan.dataset.iconId = node.id; // 图标专属标识
@@ -82,7 +82,7 @@ function renderTreeNode(node, isRoot = false) {
     return nodeDiv;
 }
 
-// 绑定编辑器页所有事件（核心修复：区分图标/节点点击，阻止冒泡）
+// 绑定编辑器页所有事件 --- 核心修改区域 START ---
 function bindEditEvents() {
     // 顶部导航事件
     document.getElementById('addRootBtn').onclick = addRootPart;
@@ -92,24 +92,43 @@ function bindEditEvents() {
     document.getElementById('addChildBtn').onclick = addChildPart;
     document.getElementById('deletePartBtn').onclick = deleteCurrentPart;
     document.getElementById('savePartBtn').onclick = saveCurrentPart;
-    // 树容器事件委托（核心：修复选中/折叠冲突）
+
+    // 核心修改1：事件委托仅绑定到【实际零件节点.tree-node】，排除父级容器
+    // 方案：通过事件目标的classList精准判断，仅处理零件节点/图标点击
     document.getElementById('treeContainer').addEventListener('click', function(e) {
         const target = e.target;
-        // 点击图标：折叠/展开（独立操作，阻止冒泡）
-        if (target.classList.contains('node-icon')) {
-            e.stopPropagation(); // 关键：阻止事件冒泡到节点
-            const nodeId = target.dataset.iconId;
+        const targetNode = target.closest('.tree-node'); // 仅获取零件节点DOM
+        const targetIcon = target.closest('.node-icon'); // 仅获取图标DOM
+
+        // 1. 点击图标：折叠/展开（独立操作，阻止冒泡）
+        if (targetIcon) {
+            e.stopPropagation();
+            const nodeId = targetIcon.dataset.iconId;
             if (nodeId) toggleNodeExpanded(nodeId);
             return;
         }
-        // 点击节点：选中并加载编辑信息（精准匹配节点DOM）
-        const targetNode = target.closest('[data-node-id]');
+
+        // 2. 点击零件节点（含名称）：触发选中编辑（必须是实际节点，排除空白/容器）
         if (targetNode) {
             const nodeId = targetNode.dataset.nodeId;
             if (nodeId) selectTreeNode(nodeId);
+            return;
+        }
+
+        // 3. 点击树容器空白处/非节点区域：友好提示（核心！解决用户误点问题）
+        if (!targetNode && !targetIcon) {
+            alert('💡 请点击【实际的零件节点名称】（如"新根零件"），才能进入编辑哦！');
+            // 可选：自动聚焦到顶部新增按钮，引导用户操作
+            document.getElementById('addRootBtn').focus();
         }
     });
+
+    // 核心修改2：给树容器添加【防误触提示】，鼠标悬停空白处显示提示文字
+    const treeContainer = document.getElementById('treeContainer');
+    treeContainer.style.cursor = 'default';
+    treeContainer.title = '请点击零件节点名称进入编辑，点击▶/▼折叠层级';
 }
+// 核心修改区域 END ---
 
 // 新增根零件（支持多个独立根零件）
 function addRootPart() {
@@ -117,13 +136,13 @@ function addRootPart() {
     bomData.rootNodes.push(newNode);
     saveBomData();
     renderBomTree();
-    selectTreeNode(newNode.id); // 自动选中新节点
+    selectTreeNode(newNode.id); // 自动选中新节点，直接进入编辑（优化体验）
 }
 
 // 为当前零件新增子零件
 function addChildPart() {
     if (!currentNodeId) {
-        alert('请先在左侧选择一个零件作为父零件！');
+        alert('💡 请先在左侧选择一个零件作为父零件！');
         return;
     }
     const parentNode = findNodeById(currentNodeId, bomData.rootNodes);
@@ -134,13 +153,13 @@ function addChildPart() {
     parentNode.expanded = true; // 自动展开父节点
     saveBomData();
     renderBomTree();
-    selectTreeNode(newNode.id);
+    selectTreeNode(newNode.id); // 自动选中新子节点，直接进入编辑
 }
 
 // 删除当前选中零件（含子零件）
 function deleteCurrentPart() {
     if (!currentNodeId) {
-        alert('请先选择要删除的零件！');
+        alert('💡 请先选择要删除的零件！');
         return;
     }
     if (!confirm('警告！将删除当前零件及所有子零件，操作不可恢复！确认删除？')) return;
@@ -206,7 +225,7 @@ function saveWholeBom() {
     alert(`BOM表「${bomName}」保存成功！`);
 }
 
-// 选中节点并加载编辑信息（核心修复：支持所有节点选中）
+// 选中节点并加载编辑信息（原有逻辑，正常无需修改）
 function selectTreeNode(nodeId) {
     const node = findNodeById(nodeId, bomData.rootNodes);
     if (!node) return;
@@ -224,7 +243,7 @@ function selectTreeNode(nodeId) {
     renderBomTree();
 }
 
-// 折叠/展开节点（核心修复：功能完全生效）
+// 折叠/展开节点（原有逻辑，正常无需修改）
 function toggleNodeExpanded(nodeId) {
     const node = findNodeById(nodeId, bomData.rootNodes);
     if (!node || !node.children || node.children.length === 0) return;
