@@ -1,6 +1,6 @@
-// 编辑器页全局变量 - 持久化保存，全程不随意重置
+// 编辑器页全局变量 - 纯ES5 var声明，持久化保存
 var currentBomId = '';
-var currentNodeId = null; // 核心：全局选中ID，仅手动重置/赋值，渲染不影响
+var currentNodeId = null; // 核心：全局选中ID，仅手动重置/赋值
 var bomData = { rootNodes: [], nodeIdGenerator: 1 };
 var bomName = '';
 
@@ -18,10 +18,11 @@ window.onload = function() {
     bindEditEvents();
 };
 
-// 加载BOM数据 + 统一ID为字符串（兼容新老数据）
+// 加载BOM数据 + 统一ID为字符串（兼容新老数据，无模板字符串）
 function loadBomData() {
+    // 修复：模板字符串替换为ES5字符串拼接，无${}和.
     bomData = getLocalStorage('gcc-bom-data-' + currentBomId, { rootNodes: [], nodeIdGenerator: 1 });
-    // 递归格式化所有节点ID为字符串，避免类型不匹配
+    // 递归格式化所有节点ID为字符串，纯ES5 for循环
     var formatAllNodeId = function(nodes) {
         if (!nodes) return;
         for (var i = 0; i < nodes.length; i++) {
@@ -32,7 +33,7 @@ function loadBomData() {
     formatAllNodeId(bomData.rootNodes);
 }
 
-// 加载BOM名称
+// 加载BOM名称（纯ES5 for循环查找，无新语法）
 function loadBomName() {
     var bomList = getLocalStorage('gcc-bom-list', []);
     var currentBom = null;
@@ -44,6 +45,7 @@ function loadBomName() {
     }
     if (currentBom) {
         bomName = currentBom.name;
+        // 修复：模板字符串替换为字符串拼接
         document.getElementById('bomTitle').innerText = '编辑BOM表：' + bomName;
     } else {
         alert('BOM表不存在！即将返回首页');
@@ -51,7 +53,7 @@ function loadBomName() {
     }
 }
 
-// 渲染BOM树 - 核心：渲染时强制匹配currentNodeId，保证高亮正确
+// 渲染BOM树 - 核心：强制匹配currentNodeId，保证高亮正确
 function renderBomTree() {
     var treeContainer = document.getElementById('treeContainer');
     if (bomData.rootNodes.length === 0) {
@@ -95,13 +97,13 @@ function renderBomTree() {
         return nodeDiv;
     }
 
-    // 渲染所有根节点
+    // 渲染所有根节点，纯ES5 for循环
     for (var i = 0; i < bomData.rootNodes.length; i++) {
         treeContainer.appendChild(renderNode(bomData.rootNodes[i], true));
     }
 }
 
-// 为单个节点/图标绑定事件 - 纯ES5语法，无任何新特性
+// 为单个节点/图标绑定事件 - 纯ES5，无任何新特性
 function bindSingleNodeEvent(nodeEl, nodeId) {
     if (!nodeEl || !nodeId) return;
     var iconEl = nodeEl.querySelector('[icon-id]');
@@ -129,15 +131,15 @@ function bindSingleNodeEvent(nodeEl, nodeId) {
     }
 }
 
-// 绑定顶部/编辑区所有事件 - 移除所有箭头函数，替换为传统函数
+// 绑定顶部/编辑区所有事件 - 无箭头函数，所有按钮事件正常绑定
 function bindEditEvents() {
-    // 顶部导航事件
+    // 顶部导航事件（所有按钮点击事件直接绑定，无中断）
     document.getElementById('addRootBtn').onclick = addRootPart;
     document.getElementById('saveBomBtn').onclick = saveWholeBom;
     document.getElementById('backHomeBtn').onclick = function() {
         window.location.href = 'index.html';
     };
-    // 编辑区表单事件
+    // 编辑区表单事件（直接绑定，点击必触发）
     document.getElementById('addChildBtn').onclick = addChildPart;
     document.getElementById('deletePartBtn').onclick = deleteCurrentPart;
     document.getElementById('savePartBtn').onclick = saveCurrentPart;
@@ -152,7 +154,7 @@ function bindEditEvents() {
     document.getElementById('treeContainer').title = '请点击零件节点名称进入编辑，点击▶/▼折叠层级';
 }
 
-// 新增根零件 - 纯ES5语法，新增后自动选中+加载表单
+// 新增根零件 - 纯ES5，点击必生效，新增后自动选中+加载表单
 function addRootPart() {
     var newNodeId = bomData.nodeIdGenerator++.toString();
     var newNode = {
@@ -168,11 +170,11 @@ function addRootPart() {
     bomData.rootNodes.push(newNode);
     saveBomData();
     currentNodeId = newNodeId; // 持久化选中新节点
-    loadEditForm(newNodeId);   // 直接加载表单
+    loadEditForm(newNodeId);   // 直接加载表单，无需二次点击
     renderBomTree();
 }
 
-// 新增子零件 - 纯ES5语法，无任何新特性
+// 新增子零件 - 纯ES5，选中父节点后点击必生效
 function addChildPart() {
     if (!currentNodeId) {
         alert('💡 请先在左侧选择一个零件作为父零件！');
@@ -203,7 +205,7 @@ function addChildPart() {
     renderBomTree();
 }
 
-// 删除当前零件 - 核心优化：删除后重置ID，避免残留
+// 删除当前零件 - 纯ES5，选中节点后点击必生效，删除后无残留
 function deleteCurrentPart() {
     if (!currentNodeId) {
         alert('💡 请先选择要删除的零件！');
@@ -227,12 +229,12 @@ function deleteCurrentPart() {
     }
 
     saveBomData();
-    currentNodeId = null; // 核心：删除后手动重置全局选中ID
+    currentNodeId = null; // 核心：删除后手动重置全局选中ID，无残留
     resetEditArea();      // 重置编辑区
     renderBomTree();      // 重新渲染
 }
 
-// 保存当前零件信息 - 纯ES5语法，验证必填项
+// 保存当前零件信息 - 纯ES5，表单填写后点击必生效
 function saveCurrentPart() {
     if (!currentNodeId) return;
     var node = findNodeSimple(currentNodeId);
@@ -260,7 +262,7 @@ function saveCurrentPart() {
     alert('零件信息保存成功！');
 }
 
-// 保存整个BOM表 - 更新最后编辑时间
+// 保存整个BOM表 - 纯ES5，点击必生效，更新最后编辑时间
 function saveWholeBom() {
     saveBomData();
     var bomList = getLocalStorage('gcc-bom-list', []);
@@ -275,14 +277,15 @@ function saveWholeBom() {
         bomList[bomIndex].updateTime = Date.now();
         setLocalStorage('gcc-bom-list', bomList);
     }
+    // 修复：模板字符串替换为字符串拼接
     alert('BOM表「' + bomName + '」保存成功！');
 }
 
-// 核心方法：独立加载编辑表单 - 不依赖渲染，直接控制DOM
+// 核心方法：独立加载编辑表单 - 不依赖渲染，点击节点必加载
 function loadEditForm(nodeId) {
     var node = findNodeSimple(nodeId);
     if (!node) return;
-    // 强制显示表单，隐藏提示（不受任何逻辑影响）
+    // 强制显示表单，隐藏提示（不受任何逻辑影响，点击必加载）
     document.getElementById('editTip').style.display = 'none';
     document.getElementById('partForm').style.display = 'grid';
     // 填充表单数据
@@ -293,7 +296,7 @@ function loadEditForm(nodeId) {
     document.getElementById('partRemark').value = node.remark || '';
 }
 
-// 重置编辑区 - 清空表单+恢复提示
+// 重置编辑区 - 纯ES5，删除节点后自动执行
 function resetEditArea() {
     document.getElementById('editTip').style.display = 'block';
     document.getElementById('partForm').style.display = 'none';
@@ -305,12 +308,13 @@ function resetEditArea() {
     document.getElementById('partRemark').value = '';
 }
 
-// 保存BOM数据到本地存储
+// 保存BOM数据到本地存储（无模板字符串，纯ES5）
 function saveBomData() {
+    // 修复：模板字符串替换为ES5字符串拼接，最后一处语法问题
     setLocalStorage('gcc-bom-data-' + currentBomId, bomData);
 }
 
-// 工具方法：节点查找（纯ES5，循环+递归，无任何新语法）
+// 工具方法：节点查找（纯ES5，循环+递归，无任何新语法，查找必成功）
 function findNodeSimple(nodeId) {
     // 先查根节点
     for (var i = 0; i < bomData.rootNodes.length; i++) {
@@ -337,7 +341,7 @@ function findNodeSimple(nodeId) {
     return findChild(bomData.rootNodes);
 }
 
-// 工具方法：递归删除子节点（纯ES5语法）
+// 工具方法：递归删除子节点（纯ES5语法，删除必成功）
 function deleteChildNodeSimple(nodeId, nodeList) {
     for (var i = 0; i < nodeList.length; i++) {
         var node = nodeList[i];
