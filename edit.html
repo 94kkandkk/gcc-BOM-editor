@@ -1,78 +1,43 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>编辑BOM表 - GCC BOM管理系统</title>
-    <!-- 引入全局样式 -->
-    <link rel="stylesheet" href="style/main.css">
-</head>
-<body>
-    <!-- 顶部导航 -->
-    <div class="nav">
-        <div class="nav-title" id="bomTitle">编辑BOM表</div>
-        <div class="nav-btn-group">
-            <button class="btn btn-primary" id="addRootBtn">新增根零件</button>
-            <button class="btn btn-success" id="saveBomBtn">保存BOM表</button>
-            <button class="btn btn-primary" id="backHomeBtn">返回首页</button>
-        </div>
+<div class="main-edit">
+  <!-- 左侧树容器 -->
+  <div class="tree-container">
+    <h3>BOM结构树</h3>
+    <div id="treeContainer"></div>
+  </div>
+  <!-- 右侧编辑区域（自适应） -->
+  <div class="part-edit-area">
+    <!-- 顶部操作按钮 -->
+    <div class="top-btn-group">
+      <button class="btn btn-primary" id="addRootBtn">⚙️ 新增根零件</button>
+      <button class="btn btn-success" id="saveBomBtn">💾 保存BOM</button>
+      <button class="btn btn-default" id="backHomeBtn">🏠 返回首页</button>
     </div>
-
-    <!-- 核心左右分栏 -->
-    <div class="main-edit">
-        <!-- 左侧BOM树 -->
-        <div class="bom-tree-area">
-            <div class="module-title">
-                <span>BOM树状结构</span>
-                <span class="module-desc">（点击图标折叠/展开，点击名称选中编辑）</span>
-            </div>
-            <div id="treeContainer" class="tree-container">
-                <div class="empty-tip">暂无零件<br>点击顶部「新增根零件」开始创建</div>
-            </div>
-        </div>
-
-        <!-- 右侧编辑区 -->
-        <div class="part-edit-area">
-            <div class="module-title">
-                <span>零件信息编辑</span>
-                <span class="module-desc">（必填项：零件名称）</span>
-            </div>
-            <div class="empty-tip" id="editTip">
-                请先在左侧选择零件节点<br>
-                ▶/▼：折叠/展开层级 | 点击名称：选中加载信息
-            </div>
-            <form class="part-form" id="partForm" style="display: none;">
-                <div class="form-item">
-                    <label class="form-label" for="partName">零件名称 *</label>
-                    <input type="text" class="form-input" id="partName" placeholder="请输入零件名称（必填）">
-                </div>
-                <div class="form-item">
-                    <label class="form-label" for="partModel">零件型号</label>
-                    <input type="text" class="form-input" id="partModel" placeholder="请输入零件型号/编号">
-                </div>
-                <div class="form-item">
-                    <label class="form-label" for="partMaterial">零件材质</label>
-                    <input type="text" class="form-input" id="partMaterial" placeholder="如：不锈钢/ABS塑料/铝合金">
-                </div>
-                <div class="form-item">
-                    <label class="form-label" for="partSpec">规格参数</label>
-                    <input type="text" class="form-input" id="partSpec" placeholder="请输入零件规格/技术参数">
-                </div>
-                <div class="form-item form-item-full">
-                    <label class="form-label" for="partRemark">备注信息</label>
-                    <textarea class="form-input" id="partRemark" placeholder="供应商/采购信息等（选填）"></textarea>
-                </div>
-                <div class="form-item form-item-full opt-btn-group">
-                    <button type="button" class="btn btn-primary" id="addChildBtn">为当前零件新增子零件</button>
-                    <button type="button" class="btn btn-danger" id="deletePartBtn">删除当前零件（含子零件）</button>
-                    <button type="button" class="btn btn-success" id="savePartBtn">保存当前零件信息</button>
-                </div>
-            </form>
-        </div>
+    <!-- 编辑提示 -->
+    <div id="editTip">
+      <i>📝</i>
+      请选中左侧节点进行编辑
     </div>
-
-    <!-- 引入通用工具 + 编辑器页专属脚本 -->
-    <script src="js/common.js"></script>
-    <script src="js/edit.js"></script>
-</body>
-</html>
+    <!-- 编辑表单 -->
+    <div id="editForm">
+      <div class="form-group">
+        <label>节点名称</label>
+        <input type="text" id="nodeName" placeholder="请输入零件/材料名称">
+      </div>
+      <div class="form-group">
+        <label>型号/规格</label>
+        <input type="text" id="nodeModel" placeholder="请输入型号">
+      </div>
+      <div class="form-group">
+        <label>详细规格</label>
+        <input type="text" id="nodeSpec" placeholder="请输入详细规格">
+      </div>
+      <!-- 功能按钮组：新增子零件、新增材料、保存、删除 -->
+      <div class="btn-group">
+        <button class="btn btn-primary" id="addChildBtn">⚙️ 新增子零件</button>
+        <button class="btn btn-success" id="addMaterialBtn">📦 新增材料</button>
+        <button class="btn btn-default" id="saveBtn">💾 保存</button>
+        <button class="btn btn-danger" id="deleteBtn">🗑️ 删除</button>
+      </div>
+    </div>
+  </div>
+</div>
