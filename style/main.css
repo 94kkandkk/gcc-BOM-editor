@@ -1,4 +1,4 @@
-/* 全局重置 - 消除默认边距，防止横向滚动 */
+/* 全局重置 - 编辑页+首页通用 */
 * {
   margin: 0;
   padding: 0;
@@ -7,18 +7,86 @@
 }
 body {
   background: #f5f7fa;
-  overflow-x: hidden; /* 禁止横向滚动 */
+  overflow-x: hidden;
+  color: #333;
+  font-size: 14px;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+ul, li {
+  list-style: none;
+}
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
-/* 主容器 - 弹性布局，左侧固定右侧自适应 */
+/* 首页专属样式 - 快速恢复美观布局 */
+.home-header {
+  text-align: center;
+  padding: 40px 0;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 30px;
+}
+.home-header h1 {
+  font-size: 28px;
+  color: #409eff;
+  margin-bottom: 10px;
+}
+.home-header p {
+  color: #666;
+  font-size: 16px;
+}
+.home-btn-group {
+  text-align: center;
+  margin: 40px 0;
+}
+.home-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  padding: 30px;
+  margin-bottom: 20px;
+}
+.home-card h3 {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 20px;
+  padding-left: 10px;
+  border-left: 3px solid #409eff;
+}
+.bom-list-item {
+  padding: 15px 20px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s;
+}
+.bom-list-item:hover {
+  border-color: #409eff;
+  background: #f8f9fa;
+}
+.bom-list-item .bom-name {
+  font-weight: 500;
+}
+.bom-list-item .bom-time {
+  color: #999;
+  font-size: 12px;
+}
+
+/* 编辑页专属样式 - 保留原有全部样式，不修改 */
 .main-edit {
   display: flex;
   gap: 16px;
   padding: 20px;
   min-height: 100vh;
 }
-
-/* 左侧树容器 - 固定宽度，不随页面拉伸 */
 .tree-container {
   flex: 0 0 280px;
   background: #fff;
@@ -41,7 +109,6 @@ body {
   text-align: center;
   font-size: 14px;
 }
-/* 节点样式 - 区分零件/材料，hover/选中效果 */
 .tree-node {
   padding: 10px 12px;
   cursor: pointer;
@@ -59,10 +126,8 @@ body {
 }
 .tree-node:hover { background: #f8f9fa; }
 .tree-node.active:hover { background: #e6f0ff; }
-
-/* 右侧编辑区域 - 自适应剩余宽度，无固定宽高 */
 .part-edit-area {
-  flex: 1; /* 关键：自适应父容器剩余宽度 */
+  flex: 1;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0,0,0,0.06);
@@ -76,7 +141,6 @@ body {
   color: #333;
   margin-bottom: 8px;
 }
-/* 编辑提示 - 居中显示 */
 #editTip {
   display: flex;
   align-items: center;
@@ -88,8 +152,6 @@ body {
   gap: 8px;
 }
 #editTip i { font-size: 48px; margin-bottom: 16px; color: #eee; }
-
-/* 编辑表单 - 美学布局，标签+输入框上下排列 */
 #editForm {
   display: none;
   flex-direction: column;
@@ -119,19 +181,16 @@ body {
   border-color: #409eff;
   box-shadow: 0 0 0 2px rgba(64,158,255,0.1);
 }
-
-/* 按钮组 - 简化样式，圆角方形，分组排列，美学间距 */
 .btn-group {
   display: flex;
   gap: 12px;
-  flex-wrap: wrap; /* 适配小屏幕，自动换行 */
+  flex-wrap: wrap;
   margin-top: 8px;
 }
-/* 通用按钮样式 - 圆角方形，统一大小，简化 */
 .btn {
   padding: 10px 20px;
   border: none;
-  border-radius: 8px; /* 圆角方形 */
+  border-radius: 8px;
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
@@ -142,15 +201,12 @@ body {
   min-width: 100px;
   justify-content: center;
 }
-/* 按钮配色区分功能 */
 .btn-primary { background: #409eff; color: #fff; }
 .btn-success { background: #67c23a; color: #fff; }
 .btn-default { background: #f5f7fa; color: #666; border: 1px solid #e5e6eb; }
 .btn-danger { background: #f56c6c; color: #fff; }
 .btn:hover { opacity: 0.9; transform: translateY(-1px); }
 .btn:active { transform: translateY(0); }
-
-/* 顶部操作按钮组 - 单独样式，间距适配 */
 .top-btn-group {
   display: flex;
   gap: 12px;
