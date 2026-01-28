@@ -315,6 +315,109 @@ textarea.form-input {
     }
     .opt-btn-group .btn {
         flex: 1;
+/* 修复编辑区域过宽，实现多列布局 */
+.part-edit-area {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
+#partForm {
+  display: none;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: center;
+  flex-direction: row;
+}
+#partForm > div {
+  flex: 1;
+  min-width: 200px;
+}
+#partForm input, #partForm textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-sizing: border-box;
+}
+#partForm textarea {
+  resize: none;
+  min-height: 80px;
+}
+
+/* 修复按钮样式：圆角方形，统一大小，取消宽布局 */
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px; /* 圆角方形 */
+  cursor: pointer;
+  font-size: 14px;
+  min-width: 100px;
+  white-space: nowrap;
+  margin: 0 5px;
+}
+.btn-primary {
+  background: #007bff;
+  color: #fff;
+}
+.btn-success {
+  background: #28a745;
+  color: #fff;
+}
+.btn-danger {
+  background: #dc3545;
+  color: #fff;
+}
+.btn-default {
+  background: #6c757d;
+  color: #fff;
+}
+.btn:hover {
+  opacity: 0.9;
+}
+
+/* 节点样式 */
+.tree-node {
+  padding: 8px 12px;
+  cursor: pointer;
+  margin: 4px 0;
+  border-radius: 6px;
+  border: 1px solid #eee;
+  transition: all 0.2s;
+}
+.tree-node.active {
+  background: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+.tree-node:hover {
+  background: #f5f5f5;
+}
+.tree-node.active:hover {
+  background: #0069d9;
+}
+
+/* 通用样式 */
+.main-edit {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.tree-container {
+  flex: 0 0 300px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 10px;
+  height: calc(100vh - 80px);
+  overflow-y: auto;
+}
+#editTip {
+  padding: 40px 20px;
+  text-align: center;
+  color: #666;
+  width: 100%;
+}
         min-width: 120px;
         margin-bottom: 8px;
     }
