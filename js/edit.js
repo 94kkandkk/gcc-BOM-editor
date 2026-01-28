@@ -90,7 +90,7 @@ function renderBomTree() {
     bomData.rootNodes.forEach(node => treeContainer.appendChild(renderNode(node, true)));
 }
 
-// 为单个节点/图标绑定事件 - 保留稳定逻辑
+// 为单个节点/图标绑定事件 - 修复?.语法错误，兼容所有环境
 function bindSingleNodeEvent(nodeEl, nodeId) {
     if (!nodeEl || !nodeId) return;
     const iconEl = nodeEl.querySelector('[icon-id]');
@@ -103,11 +103,12 @@ function bindSingleNodeEvent(nodeEl, nodeId) {
         renderBomTree();        // 3. 最后渲染树，保证高亮
     };
 
-    // 图标点击：折叠/展开，阻止冒泡
+    // 图标点击：折叠/展开，阻止冒泡（已修复?.语法错误）
     if (iconEl) {
         iconEl.onclick = function(e) {
             e.stopPropagation();
             const node = findNodeSimple(nodeId);
+            // 修复：删除可选链?.，改用传统判空，兼容所有浏览器
             if (node && node.children && node.children.length > 0) {
                 node.expanded = !node.expanded;
                 saveBomData();
