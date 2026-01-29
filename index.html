@@ -8,19 +8,90 @@
     <link rel="stylesheet" href="style/main.css">
 </head>
 <body>
-    <div class="header">
-        <h1>GCC BOM表管理系统</h1>
-        <p>产品零部件层级管理 · 本地数据持久化 · 极简操作</p>
-    </div>
-
-    <div class="main">
-        <div class="main-title">
-            <span>我的BOM表</span>
-            <button class="btn btn-primary" id="newBomBtn">新建BOM表</button>
+    <div class="home-container">
+        <!-- 左侧导航栏 -->
+        <div class="home-sidebar">
+            <div class="sidebar-header">
+                <h1>BOM表管理系统</h1>
+            </div>
+            <div class="sidebar-nav">
+                <div class="nav-item active" data-target="bom-section">
+                    <span class="nav-icon">📋</span>
+                    <span class="nav-text">BOM表管理</span>
+                </div>
+                <div class="nav-item" data-target="material-section">
+                    <span class="nav-icon">📦</span>
+                    <span class="nav-text">材料库管理</span>
+                </div>
+                <div class="nav-item" data-target="process-section">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-text">工艺库管理</span>
+                </div>
+            </div>
+            
+            <!-- 用户信息区域 -->
+            <div class="sidebar-user">
+                <div class="user-info">
+                    <div class="user-name">管理员</div>
+                    <div class="user-account">admin@example.com</div>
+                </div>
+                <div class="user-actions">
+            <button class="btn btn-sm btn-danger" id="logoutBtn">退出</button>
+          </div>
+            </div>
         </div>
-        <ul class="bom-list" id="bomList">
-            <li class="empty-tip">暂无已保存的BOM表，点击「新建BOM表」开始创建</li>
-        </ul>
+
+        <!-- 右侧内容区 -->
+        <div class="home-content">
+            <!-- BOM表管理区域 -->
+            <div id="bom-section" class="content-section">
+                <div class="section-header">
+                    <h2>我的BOM表</h2>
+                    <div class="header-buttons">
+                        <button class="btn btn-primary" id="newBomBtn">新建BOM表</button>
+                        <div class="export-options" style="display: none;">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="includeMaterialsCheckbox"> 包含材料
+                            </label>
+                            <button class="btn btn-info" id="confirmExportBtn">📤 导出选中</button>
+                            <button class="btn btn-default" id="cancelExportBtn">取消</button>
+                        </div>
+                        <button class="btn btn-info" id="exportBtn">📤 导出Excel</button>
+                    </div>
+                </div>
+                <div class="section-content">
+                    <ul class="bom-list" id="bomList">
+                        <li class="empty-tip">暂无已保存的BOM表，点击「新建BOM表」开始创建</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 材料库管理区域 -->
+            <div id="material-section" class="content-section" style="display: none;">
+                <div class="section-header">
+                    <h2>材料库管理</h2>
+                    <button class="btn btn-primary" id="addMaterialBtn">添加材料</button>
+                </div>
+                <div class="section-content">
+                    <ul class="material-library-list" id="materialList">
+                        <li class="empty-tip">材料库为空，请点击「添加材料」开始创建</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 工艺库管理区域 -->
+            <div id="process-section" class="content-section" style="display: none;">
+                <div class="section-header">
+                    <h2>工艺库管理</h2>
+                    <button class="btn btn-primary" id="addProcessBtn">添加工艺</button>
+                </div>
+                <div class="section-content">
+                    <ul class="process-library-list" id="processList">
+                        <li class="empty-tip">工艺库为空，请点击「添加工艺」开始创建</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- 新建BOM表弹窗 -->
@@ -33,13 +104,72 @@
             </div>
             <div class="modal-btn-group">
                 <button class="btn btn-primary" id="confirmNewBtn">确认创建</button>
-                <button class="btn btn-primary" id="cancelNewBtn">取消</button>
+                <button class="btn btn-default" id="cancelNewBtn">取消</button>
             </div>
         </div>
     </div>
 
+    <!-- 材料库相关弹窗 -->
+    <div class="modal" id="materialModal">
+        <div class="modal-content">
+            <div class="modal-title" id="materialModalTitle">添加材料</div>
+            <div class="form-item">
+                <label class="form-label" for="materialName">材料名称 *</label>
+                <input type="text" class="form-input" id="materialName" placeholder="请输入材料名称">
+            </div>
+            <div class="form-item">
+                <label class="form-label" for="materialGrade">牌号</label>
+                <input type="text" class="form-input" id="materialGrade" placeholder="请输入材料牌号">
+            </div>
+            <div class="form-item">
+                <label class="form-label" for="materialProvince">供应商省市</label>
+                <input type="text" class="form-input" id="materialProvince" placeholder="如：广东省深圳市">
+            </div>
+            <div class="form-item">
+                <label class="form-label" for="materialAddress">详细地址</label>
+                <input type="text" class="form-input" id="materialAddress" placeholder="请输入详细地址">
+            </div>
+            <div class="form-item">
+                <label class="form-label" for="materialContact">联系人</label>
+                <input type="text" class="form-input" id="materialContact" placeholder="请输入联系人姓名">
+            </div>
+            <div class="form-item">
+                <label class="form-label" for="materialPhone">手机号</label>
+                <input type="text" class="form-input" id="materialPhone" placeholder="请输入手机号">
+            </div>
+            <div class="modal-btn-group">
+                <button class="btn btn-primary" id="confirmMaterialBtn">确认</button>
+                <button class="btn btn-default" id="cancelMaterialBtn">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 工艺库相关弹窗 -->
+    <div class="modal" id="processModal">
+        <div class="modal-content">
+            <div class="modal-title" id="processModalTitle">添加工艺</div>
+            <div class="form-item">
+                <label class="form-label" for="processName">工艺名称 *</label>
+                <input type="text" class="form-input" id="processName" placeholder="请输入工艺名称（中文）">
+            </div>
+            <div class="form-item">
+                <label class="form-label" for="processEnglishName">英文名称 *</label>
+                <input type="text" class="form-input" id="processEnglishName" placeholder="请输入工艺英文名称">
+            </div>
+            <div class="modal-btn-group">
+                <button class="btn btn-primary" id="confirmProcessBtn">确认</button>
+                <button class="btn btn-default" id="cancelProcessBtn">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入SheetJS库用于Excel导出 -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    
     <!-- 引入通用工具 + 首页专属脚本 -->
     <script src="js/common.js"></script>
     <script src="js/index.js"></script>
+    <script src="js/material.js"></script>
+    <script src="js/process.js"></script>
 </body>
 </html>
