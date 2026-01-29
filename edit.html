@@ -1,43 +1,179 @@
-<div class="main-edit">
-  <!-- 左侧树容器 -->
-  <div class="tree-container">
-    <h3>BOM结构树</h3>
-    <div id="treeContainer"></div>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>编辑BOM表 - GCC BOM表管理系统</title>
+    <!-- 引入全局样式 -->
+    <link rel="stylesheet" href="style/main.css">
+</head>
+<body>
+    <div class="main-edit">
+        <!-- 左侧树容器 -->
+        <div class="tree-container">
+            <h3>BOM结构树</h3>
+            <div id="treeContainer"></div>
+        </div>
+        <!-- 右侧编辑区域（自适应） -->
+        <div class="part-edit-area">
+            <!-- 顶部操作按钮 -->
+            <div class="top-btn-group">
+    <button class="btn btn-primary" id="addRootBtn">⚙️ 新增根零件</button>
+    <button class="btn btn-default" id="backHomeBtn">🏠 返回首页</button>
   </div>
-  <!-- 右侧编辑区域（自适应） -->
-  <div class="part-edit-area">
-    <!-- 顶部操作按钮 -->
-    <div class="top-btn-group">
-      <button class="btn btn-primary" id="addRootBtn">⚙️ 新增根零件</button>
-      <button class="btn btn-success" id="saveBomBtn">💾 保存BOM</button>
-      <button class="btn btn-default" id="backHomeBtn">🏠 返回首页</button>
+            <!-- 编辑提示 -->
+            <div id="editTip">
+                <i>📝</i>
+                请选中左侧节点进行编辑
+            </div>
+            <!-- 编辑表单 -->
+            <div id="editForm">
+                <!-- 零件属性编辑区域 -->
+                <div class="part-properties" id="partProperties" style="display: none;">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>零件名称</label>
+                            <input type="text" id="partName" placeholder="请输入零件名称">
+                        </div>
+                        <div class="form-group">
+                            <label>工艺</label>
+                            <select id="partProcess" placeholder="请选择工艺">
+                                <option value="">请选择工艺</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>数量</label>
+                            <input type="number" id="partQuantity" placeholder="请输入数量" min="1" value="1">
+                        </div>
+                        <div class="form-group">
+                            <label>零件号</label>
+                            <input type="text" id="partNumber" placeholder="请输入零件号">
+                        </div>
+                        <div class="form-group">
+                            <label>配置归属</label>
+                            <input type="text" id="partConfig" placeholder="请输入配置归属">
+                        </div>
+                        <div class="form-group">
+                            <label>尺寸</label>
+                            <input type="text" id="partSize" placeholder="请输入尺寸">
+                        </div>
+                        <div class="form-group">
+                            <label>厚度</label>
+                            <input type="text" id="partThickness" placeholder="请输入厚度">
+                        </div>
+                        <div class="form-group">
+                            <label>面积</label>
+                            <input type="number" id="partArea" placeholder="请输入面积" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>毛面积</label>
+                            <input type="number" id="partGrossArea" placeholder="毛面积" step="0.01" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>线长</label>
+                            <input type="number" id="partWireLength" placeholder="请输入线长" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>重量</label>
+                            <input type="number" id="partWeight" placeholder="请输入重量" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>毛重</label>
+                            <input type="number" id="partGrossWeight" placeholder="毛重" step="0.01" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>利用率</label>
+                            <div class="input-with-unit">
+                                <input type="number" id="partUtilization" placeholder="请输入利用率" step="0.01">
+                                <span class="unit">%</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>材料名称</label>
+                            <input type="text" id="partMaterial" placeholder="请通过添加材料功能选择" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>表面处理</label>
+                            <input type="text" id="partSurface" placeholder="请输入表面处理">
+                        </div>
+                        <div class="form-group">
+                            <label>模具吨位</label>
+                            <input type="number" id="partMoldTonnage" placeholder="请输入模具吨位" step="1">
+                        </div>
+                        <div class="form-group">
+                            <label>装备</label>
+                            <input type="text" id="partEquipment" placeholder="请输入装备">
+                        </div>
+                        <div class="form-group">
+                            <label>装备数量</label>
+                            <input type="number" id="partEquipmentQuantity" placeholder="请输入装备数量" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label>浇口数</label>
+                            <input type="number" id="partGateCount" placeholder="请输入浇口数" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label>CTime</label>
+                            <input type="text" id="partCTime" placeholder="请输入CTime">
+                        </div>
+                        <div class="form-group">
+                            <label>MOB</label>
+                            <div class="mob-switch">
+                                <button class="btn btn-success" id="mobMake" data-value="Make">Make</button>
+                                <button class="btn btn-default" id="mobBuy" data-value="Buy">Buy</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>备注</label>
+                            <textarea id="partRemark" placeholder="请输入备注" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>制造公司</label>
+                            <input type="text" id="partManufacturer" placeholder="请输入制造公司">
+                        </div>
+                        <div class="form-group">
+                            <label>公司地址</label>
+                            <input type="text" id="partManufacturerAddress" placeholder="请输入公司地址">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 材料属性编辑区域 -->
+                <div class="material-properties" id="materialProperties" style="display: none;">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>材料名称</label>
+                            <input type="text" id="materialName" placeholder="请输入材料名称">
+                        </div>
+                        <div class="form-group">
+                            <label>牌号</label>
+                            <input type="text" id="materialGrade" placeholder="请输入材料牌号">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>供应商信息</label>
+                            <input type="text" id="materialSupplier" placeholder="请输入供应商信息" disabled>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 功能按钮组：新增子零件、新增材料、保存、删除 -->
+                <div class="btn-group">
+                    <button class="btn btn-primary" id="addChildBtn">⚙️ 新增子零件</button>
+                    <button class="btn btn-success" id="addMaterialBtn">📦 新增材料</button>
+                    <button class="btn btn-default" id="saveBtn">💾 保存</button>
+                    <button class="btn btn-danger" id="deleteBtn">🗑️ 删除</button>
+                </div>
+            </div>
+        </div>
     </div>
-    <!-- 编辑提示 -->
-    <div id="editTip">
-      <i>📝</i>
-      请选中左侧节点进行编辑
-    </div>
-    <!-- 编辑表单 -->
-    <div id="editForm">
-      <div class="form-group">
-        <label>节点名称</label>
-        <input type="text" id="nodeName" placeholder="请输入零件/材料名称">
-      </div>
-      <div class="form-group">
-        <label>型号/规格</label>
-        <input type="text" id="nodeModel" placeholder="请输入型号">
-      </div>
-      <div class="form-group">
-        <label>详细规格</label>
-        <input type="text" id="nodeSpec" placeholder="请输入详细规格">
-      </div>
-      <!-- 功能按钮组：新增子零件、新增材料、保存、删除 -->
-      <div class="btn-group">
-        <button class="btn btn-primary" id="addChildBtn">⚙️ 新增子零件</button>
-        <button class="btn btn-success" id="addMaterialBtn">📦 新增材料</button>
-        <button class="btn btn-default" id="saveBtn">💾 保存</button>
-        <button class="btn btn-danger" id="deleteBtn">🗑️ 删除</button>
-      </div>
-    </div>
-  </div>
-</div>
+
+
+
+    <!-- 引入SheetJS库用于Excel导出 -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    
+    <!-- 引入通用工具 + 编辑页专属脚本 -->
+    <script src="js/common.js"></script>
+    <script src="js/edit.js"></script>
+</body>
+</html>
