@@ -54,3 +54,92 @@ function deleteChildNode(nodeId, nodeList = []) {
     }
     return false;
 }
+
+// 通用自定义弹窗函数
+function showModal(title, body, buttons = []) {
+  // 确保弹窗HTML存在
+  ensureModalHTML();
+  
+  const modal = document.getElementById('customModal');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalBody = document.getElementById('modalBody');
+  const modalBtnGroup = document.getElementById('modalBtnGroup');
+  
+  // 设置标题和内容
+  modalTitle.textContent = title;
+  modalBody.innerHTML = body;
+  
+  // 设置按钮
+  modalBtnGroup.innerHTML = '';
+  buttons.forEach(button => {
+    const btn = document.createElement('button');
+    btn.className = `btn ${button.className}`;
+    btn.textContent = button.text;
+    btn.onclick = button.onClick;
+    modalBtnGroup.appendChild(btn);
+  });
+  
+  // 显示弹窗
+  modal.classList.add('show');
+}
+
+// 通用关闭弹窗函数
+function closeModal() {
+  const modal = document.getElementById('customModal');
+  if (modal) {
+    modal.classList.remove('show');
+  }
+}
+
+// 显示消息提示
+function showMessage(message, type = 'info') {
+  // 确保消息容器存在
+  let messageContainer = document.getElementById('messageContainer');
+  if (!messageContainer) {
+    messageContainer = document.createElement('div');
+    messageContainer.id = 'messageContainer';
+    messageContainer.className = 'message-container';
+    document.body.appendChild(messageContainer);
+  }
+  
+  // 创建消息元素
+  const messageElement = document.createElement('div');
+  messageElement.className = `message message-${type}`;
+  messageElement.textContent = message;
+  
+  // 添加到消息容器
+  messageContainer.appendChild(messageElement);
+  
+  // 显示消息
+  setTimeout(() => {
+    messageElement.classList.add('show');
+  }, 10);
+  
+  // 3秒后自动消失
+  setTimeout(() => {
+    messageElement.classList.remove('show');
+    setTimeout(() => {
+      messageContainer.removeChild(messageElement);
+      // 如果消息容器为空，移除容器
+      if (messageContainer.children.length === 0) {
+        document.body.removeChild(messageContainer);
+      }
+    }, 300);
+  }, 3000);
+}
+
+// 确保弹窗HTML结构存在
+function ensureModalHTML() {
+  if (!document.getElementById('customModal')) {
+    const modalHTML = `
+      <div class="modal" id="customModal">
+        <div class="modal-content">
+          <div class="modal-title" id="modalTitle"></div>
+          <div class="modal-body" id="modalBody"></div>
+          <div class="modal-btn-group" id="modalBtnGroup"></div>
+        </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+  }
+}
